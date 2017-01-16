@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    {% csrf_token %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Twinesser -- Routing info</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{% static "js/tweetlink.js" %}"></script>
+        <script>
+        $(document).ready(function () {
+            $('#include-nav').load("{% static "partials/nav.html" %}")
+            $('.advise').addClass('.active');
+        })
+    </script>
+</head>
+<body style="background-color: #f5f5f5">
+<div id="include-nav"></div>
+<div style="height: 15px"></div>
+<div class="container">
+    <div class="row">
+        <div class="panel col-sm-12 col-xs-12" style="box-shadow: 0px 0px 10px 5px #e5e5e5;">
+            <div class="row">
+                <div class="col-xs-1"></div>
+                <div class="col-xs-10">
+                    <h1>Journey information</h1>
+                    {% if via == None %}
+                        <h3>From <strong>{{ from }}</strong> to <strong>{{ to }}</strong> at <strong>{{ time }}</strong></h3>
+                    {% else %}
+                        <h3>From <strong>{{ from }}</strong> to <strong>{{ to }}</strong> via <strong>{{ via }}</strong> at <strong>{{ time }}</strong></h3>
+                    {% endif %}
+                </div>
+            </div>
+            {% for trip in trips %}
+                <div class="row">
+                    <div class="col-sm-1"></div>
+                    <div class="well col-sm-10 trip-info">
+                    <p>
+                        <strong>{{ trip.departTime }}</strong> <span class="glyphicon glyphicon-arrow-right"></span> <strong>{{ trip.arrivalTime }}</strong><br/>
+                        Transfers: {{ trip.transfers }}, Total travel time: {{ trip.travelTime }}<br/>
+                        {{ trip.status }}
+                    </p>
+                        <div class="trip-details" style="display: none">
+                        <hr style="border-top-width: 2px"/>
+                            {% for subTrip in trip.subTrips %}
+                                <p>
+                                    <strong>{{ subTrip.departTime }}</strong> <span class="glyphicon glyphicon-arrow-right"></span> <strong>{{ subTrip.arrivalTime }}</strong> <br/>
+                                    {{ subTrip.status }}
+                                    <div class="row">
+                                        <div class="col-xs-1">
+                                            From:
+                                        </div>
+                                        <div class="col-xs-11">
+                                            <strong>{{ subTrip.departStation }}</strong><br/>platform {{ subTrip.departTrack }}<br/><br/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-1">
+                                            To:
+                                        </div>
+                                        <div class="col-xs-11">
+                                            <strong>{{ subTrip.arrivalStation }}</strong><br/>platform {{ subTrip.arrivalTrack }}
+                                        </div>
+                                    </div>
+                                </p>
+                                <hr class="line"/>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+</body>
+</html>
